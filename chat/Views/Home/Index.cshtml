@@ -1,0 +1,107 @@
+﻿@model Chat
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<style>
+
+    .scroll {
+        overflow-y: auto;
+    }
+
+    .height-fixed {
+        height: 95vh;
+    }
+</style>
+
+
+
+        <!-- right -->
+        <div class="col-sm-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    ログ
+                    <div class="pull-right">
+                        <input type="checkbox" id="check">
+                    </div>
+                </div>
+                <div id="update1" class="panel-body" style="height:500px;overflow:auto;">
+
+
+                    @await Component.InvokeAsync("ChatView")
+
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="InputText">発言内容</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="InputText" placeholder="発言">
+                            </div>
+                        </div>
+                        <button id="btn" type="button" class="btn btn-info col-lg-offset-10 col-sm-2">発信</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+<script>
+
+    //読み込み時
+    $(document).ready(function () {
+
+        if ("Notification" in window) {
+            var permission = Notification.permission;
+
+            if (permission === "denied" || permission === "granted") {
+                return;
+            }
+
+            Notification.requestPermission();
+        }
+    });
+
+    //送信ボタン
+    $('#btn').click(function () {
+        $.ajax({
+            url: '/api/Chat/',
+            type: 'POST',
+            contentType: 'application/json', // リクエストの Content-Type
+            data: JSON.stringify({
+                'Id': 0,
+                'Talk': $('#InputText').val(),
+                'Date': "2000-01-01 00:00:00"
+            }),
+
+        });
+    })
+
+    //更新
+    var container = $("#update1");
+    var refreshComponent = function () {
+        $.get("/Home/ChatView/1", function (data) {
+            var unko = container.html();
+            if (countStr(unko, "div") != countStr(data, "div")) {
+                container.html(data);
+                var n = new Notification("New Message !!");
+                $("#update1").scrollTop($("#update1")[0].scrollHeight);
+
+            }
+        });
+    };
+
+    $(function () { window.setInterval(refreshComponent, 500); });
+
+
+    function countStr(str, seq) {
+        return str.split(seq).length - 1;
+    }
+
+</script>

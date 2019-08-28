@@ -1,0 +1,47 @@
+﻿@model IEnumerable<chat.Models.Chat>
+
+@{
+    Layout = null;
+}
+
+@{
+    int i = 1;
+    foreach (chat.Models.Chat m in Model)
+    {
+
+        <div class="panel panel-default" style="margin-top:5px;margin-bottom:5px;">
+            <div class="panel-heading">
+                <label class="text-left">@m.User.Name / @m.Date</label>
+                @{
+
+                    if (Model.Count() == i)
+                    {
+                        <span class="label label-primary">New!</span>
+                    }
+                    i++;
+                }
+
+                @if (int.Parse(User.FindFirst("UserId").Value) == m.UserId)
+                {
+                <div class="pull-right">
+                    <img alt="@m.ChatId" src="~/images/dust.png" height="20" />
+                </div>
+                }
+                </div>
+                
+            <div class="panel-body">
+                @m.Talk
+            </div>
+        </div>
+    }
+}
+
+<script>
+
+    //削除
+    //送信ボタン
+    $('img').click(function () {
+        var id = $(this).attr("alt");
+        $.get('/api/Chat/'+id);
+    })
+</script>

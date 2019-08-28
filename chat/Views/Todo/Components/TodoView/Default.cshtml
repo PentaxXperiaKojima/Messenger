@@ -1,0 +1,77 @@
+﻿@model IEnumerable<chat.Models.Todo>
+
+@{
+    Layout = null;
+}
+
+@{
+    foreach (chat.Models.Todo m in Model)
+    {
+        @if (m.Complete == false)
+        {
+            <div class="panel panel-default" style="margin-top:5px;margin-bottom:5px;">
+                <div class="panel-body">
+                    <label class="text-left">@m.TodoContent</label>
+                    <div class="pull-right">
+                        <input todoId="@m.TodoId" class="btn-delete btn-danger" type="button" value="削除" />
+                        <input todoId="@m.TodoId" class="btn-todo btn-primary" type="button" style="width:100px;" value="完了" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    <hr />
+    foreach (chat.Models.Todo m in Model)
+    {
+        @if (m.Complete == true)
+        {
+            <div class="panel panel-default" style="margin-top:5px;margin-bottom:5px;">
+                <div class="panel-heading">
+                    <label class="text-left">@m.TodoContent</label>
+                    <div class="pull-right">
+                        <input todoId="@m.TodoId" class="btn-delete btn-danger" type="button" value="削除" />
+                        <input todoId="@m.TodoId" class="btn-todo btn-primary" type="button" style="width:100px;" value="未完了" />
+                    </div>
+                </div>
+            </div>
+         }
+    }
+}
+
+    <script>
+
+        //完了・未完了ボタン
+        $('.btn-todo').click(function () {
+            var id = $(this).attr("todoid");
+            $.post('/Todo/TodoView/',
+                {
+                    todo: {
+                        TodoContent: ''
+                    },
+                    id: id,
+                    delete:0
+                },
+                  function(data){
+                    //リクエストが成功した際に実行する関数
+                      $("#update1").html(data);
+                  }
+            );
+        })
+
+            $('.btn-delete').click(function () {
+            var id = $(this).attr("todoid");
+            $.post('/Todo/TodoView/',
+                {
+                    todo: {
+                        TodoContent: ''
+                    },
+                    id: id,
+                    delete: id
+                },
+                  function(data){
+                    //リクエストが成功した際に実行する関数
+                      $("#update1").html(data);
+                  }
+            );
+        })
+    </script>

@@ -1,0 +1,75 @@
+﻿@model Chat
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<style>
+
+    .scroll {
+        overflow-y: auto;
+    }
+
+    .height-fixed {
+        height: 95vh;
+    }
+</style>
+
+        <!-- right -->
+        <div class="col-sm-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Todo
+                </div>
+                <div id="update1" class="panel-body" style="height:500px;overflow:auto;">
+                   @await Component.InvokeAsync("TodoView",int.Parse(User.FindFirst("UserId").Value))
+                </div>
+            </div>
+
+
+
+
+
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="InputText">ToDo</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="InputText" >
+                            </div>
+                        </div>
+                        <button id="btn" type="button" class="btn btn-info col-lg-offset-10 col-sm-2">登録</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+<script>
+
+    //Controllerにわたすときは二重引用符とJsonStringなんたらを消す
+    //送信ボタン
+    $('#btn').click(function () {
+        $.post('/Todo/TodoView/',
+            {
+                todo: {
+                    TodoContent: $('#InputText').val()
+                },
+                id: 0,
+                delete:0
+
+            },
+          function(data){
+              $("#update1").html(data);
+          }
+        );
+    })
+
+    //function countStr(str, seq) {
+    //    return str.split(seq).length - 1;
+    //}
+
+</script>
