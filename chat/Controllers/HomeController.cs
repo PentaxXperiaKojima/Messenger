@@ -129,8 +129,8 @@ namespace chat.Controllers
             {
                 chat.UserId = int.Parse(User.FindFirst("UserId").Value);
                 chat.Date = DateTime.Now;
-                //      _context.Add(chat);
-                //      _context.SaveChanges();
+                      _context.Add(chat);
+                      _context.SaveChanges();
             }
 
             return;
