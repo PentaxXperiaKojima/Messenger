@@ -36,7 +36,7 @@ namespace chat.Controllers
                 return View(user);
             }
 
-            if(tmp.Pass != user.Pass)
+            if (tmp.Pass != user.Pass)
             {
                 ModelState.AddModelError(string.Empty, "間違ってるぞ！");
                 return View(user);
@@ -62,8 +62,8 @@ namespace chat.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties
                 {
-                        //永続ログイン
-                        IsPersistent = true
+                    //永続ログイン
+                    IsPersistent = true
                 }
             );
 
@@ -82,9 +82,9 @@ namespace chat.Controllers
             return View();
         }
 
-        public IActionResult ChatView(int i)
+        public IActionResult ChatView(string id)
         {
-            return ViewComponent("ChatView");
+            return ViewComponent("ChatView", id);
         }
     }
 
@@ -98,9 +98,13 @@ namespace chat.Controllers
             _context = context;
         }
 
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(string id)
         {
-            var result = _context.Chat.Include(m => m.User).Where(x => x.Date.ToString("d") == DateTime.Now.ToString("d"));
+            if (id != null)
+            {
+                id = id.Replace('-', '/');
+            }
+            var result = _context.Chat.Include(m => m.User).Where(x => x.Date.ToString("d") == id);
             return View(result);
         }
     }
@@ -125,8 +129,8 @@ namespace chat.Controllers
             {
                 chat.UserId = int.Parse(User.FindFirst("UserId").Value);
                 chat.Date = DateTime.Now;
-                _context.Add(chat);
-                _context.SaveChanges();
+                //      _context.Add(chat);
+                //      _context.SaveChanges();
             }
 
             return;
@@ -135,7 +139,7 @@ namespace chat.Controllers
 
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string date)
         {
             var a = ViewComponent("ChatView");
             return a;

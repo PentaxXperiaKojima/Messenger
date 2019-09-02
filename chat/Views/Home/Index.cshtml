@@ -18,44 +18,46 @@
 
 
 
-        <!-- right -->
-        <div class="col-sm-9">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    ログ
-                    <div class="pull-right">
-                        <input type="checkbox" id="check">
-                    </div>
-                </div>
-                <div id="update1" class="panel-body" style="height:500px;overflow:auto;">
-
-
-                    @await Component.InvokeAsync("ChatView")
-
-                </div>
-            </div>
-
-            <div class="panel panel-default">
-
-                <div class="panel-body">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="InputText">発言内容</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="InputText" placeholder="発言">
-                            </div>
-                        </div>
-                        <button id="btn" type="button" class="btn btn-info col-lg-offset-10 col-sm-2">発信</button>
-                    </form>
-                </div>
+<!-- right -->
+<div class="col-sm-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <label class="text-info">チャット</label>
+            <div class="pull-right">
+                <label class="text-info" style="padding-right:5px;">日付指定</label><input id="date" type="date" />
             </div>
         </div>
+        <div id="update1" class="panel-body" style="height:500px;overflow:auto;">
+
+
+            @await Component.InvokeAsync("ChatView")
+
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="InputText">発言内容</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="InputText" placeholder="発言">
+                    </div>
+                </div>
+                <button id="btn" type="button" class="btn btn-info col-lg-offset-10 col-sm-2">発信</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <script>
 
     //読み込み時
     $(document).ready(function () {
+
+        $('#date').val(getToday());
 
         if ("Notification" in window) {
             var permission = Notification.permission;
@@ -86,7 +88,7 @@
     //更新
     var container = $("#update1");
     var refreshComponent = function () {
-        $.get("/Home/ChatView/1", function (data) {
+        $.get("/Home/ChatView/" + $('#date').val(), function (data) {
             var unko = container.html();
             if (countStr(unko, "div") != countStr(data, "div")) {
                 container.html(data);
@@ -97,9 +99,20 @@
         });
     };
 
+    //500ms毎にチャット欄の描画更新処理を行う
     $(function () { window.setInterval(refreshComponent, 500); });
 
+    //今日の日付を作成する
+    function getToday() {
+        var today = new Date();
+        today.setDate(today.getDate());
+        var yyyy = today.getFullYear();
+        var mm = ("0" + (today.getMonth() + 1)).slice(-2);
+        var dd = ("0" + today.getDate()).slice(-2);
+        return yyyy + '-' + mm + '-' + dd;
+    }
 
+    //文字数比較
     function countStr(str, seq) {
         return str.split(seq).length - 1;
     }
